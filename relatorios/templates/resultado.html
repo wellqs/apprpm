@@ -1,0 +1,21 @@
+<body>
+    <div class="container">
+        <h2>Relatório Gerado</h2>
+        <p class="timestamp">Gerado em: {{ generation_time }}</p>
+
+        <div class="report-text">
+            {{ report_html|safe }}
+        </div>
+
+        <div class="actions">
+            <button onclick="window.print()">Imprimir</button>
+            <form action="{% url 'gerar_pdf' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="report_html" value="{{ report_html }}">
+                <input type="hidden" name="generation_time" value="{{ generation_time }}">
+                <button type="submit" class="button">Baixar PDF</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

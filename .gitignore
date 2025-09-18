@@ -1,0 +1,8 @@
+# Segredos
+.env
+
+# Banco de dados
+db.sqlite3
+
+# Cache do Python
+__pycache__/

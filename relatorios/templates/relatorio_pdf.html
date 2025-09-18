@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório</title>
+    <style>
+        body { font-family: sans-serif; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .timestamp { text-align: right; font-size: 0.8em; color: #555; }
+    </style>
+</head>
+<body>
+    <p class="timestamp">Gerado em: {{ generation_time }}</p>
+    {{ report_html|safe }}
+</body>
+</html>

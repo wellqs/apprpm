@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Relatório de Produtividade Mensal</h2>
+        <a href="{% url 'logout' %}">Sair</a>
+    </div>
+
+    <p>Usuário: <strong>{{ user.username }}</strong></p>
+    <p>Especialidade: <strong>{{ user.profile.get_especialidade_display }}</strong></p>
+    <hr>
+
+    {% if error %}
+        <p style="color: red;"><strong>Erro:</strong> {{ error }}</p>
+    {% endif %}
+
+    {% if form %}
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-field">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}<small style="color: red;">{{ field.errors|first }}</small>{% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit">Gerar Relatório</button>
+        </form>
+    {% else %}
+        <p>Nenhum formulário disponível para sua especialidade.</p>
+    {% endif %}
+{% endblock %}
