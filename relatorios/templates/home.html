@@ -3,7 +3,10 @@
 {% block content %}
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <h2>Relatório de Produtividade Mensal</h2>
-        <a href="{% url 'logout' %}">Sair</a>
+        <div>
+            <a href="{% url 'historico' %}" style="margin-right: 20px;">Ver Histórico</a>
+            <a href="{% url 'logout' %}">Sair</a>
+        </div>
     </div>
 
     <p>Usuário: <strong>{{ user.username }}</strong></p>

@@ -1,3 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado do Relatório</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; margin: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; }
+        .report-text { white-space: pre-wrap; /* Mantém a formatação do texto */ }
+        .timestamp { color: #555; font-size: 0.9em; margin-bottom: 20px; }
+        .actions { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ccc; }
+        button, .button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        /* Estilo para o botão de voltar */
+        .button.back {
+            background-color: #6c757d;
+        }
+
+        /* Regra para impressão */
+        @media print {
+            .actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <h2>Relatório Gerado</h2>
@@ -8,7 +42,10 @@
         </div>
 
         <div class="actions">
+            <a href="{% url 'home' %}" class="button back">Voltar ao Início</a>
+
             <button onclick="window.print()">Imprimir</button>
+
             <form action="{% url 'gerar_pdf' %}" method="post" style="display: inline;">
                 {% csrf_token %}
                 <input type="hidden" name="report_html" value="{{ report_html }}">

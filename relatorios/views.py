@@ -15,6 +15,7 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.template.loader import render_to_string
 from .forms import NSSForm, SESMTForm
+from .models import Relatorio
 from weasyprint import HTML
 
 # Carrega as variáveis de ambiente do arquivo .env
@@ -26,11 +27,6 @@ def home_view(request):
     user_profile = request.user.profile
     form = None
 
-    # --- Print para depuração ---
-    # Vamos verificar o valor exato da especialidade no terminal
-    print(f"Verificando especialidade para o usuário {request.user.username}: '{user_profile.especialidade}'")
-
-    # Lógica corrigida para determinar qual formulário usar
     if user_profile.especialidade == 'NSS':
         form = NSSForm(request.POST or None)
     elif user_profile.especialidade == 'SESMT':
@@ -42,20 +38,16 @@ def home_view(request):
             client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
             prompt_text = f"""
             Aja como um especialista em Segurança e Saúde do Trabalho (SST).
-
             Gere um Relatório de Produtividade Mensal formal e bem estruturado.
             A parte principal do relatório deve ser uma tabela em formato Markdown com as colunas "Atividade", "Quantidade" e "Descrição".
             Na coluna "Descrição", crie uma frase curta sobre a atividade realizada.
-
             **Exemplo de formato da tabela:**
             | Atividade | Quantidade | Descrição |
             |---|---|---|
             | Investigação de Acidentes | 1 | Realizada 1 investigação de acidente para análise de causas. |
             | Análise de Relatórios | 5 | Foram analisados 5 relatórios de empresas terceirizadas. |
-
             **Use os seguintes dados para preencher a tabela:**
             {data_to_send}
-
             Finalize o relatório com um parágrafo de conclusão e um campo para assinatura.
             """
 
@@ -69,6 +61,12 @@ def home_view(request):
 
             report_text = completion.choices[0].message.content
             report_html = markdown2.markdown(report_text, extras=["tables"])
+
+            Relatorio.objects.create(
+                usuario=request.user,
+                especialidade=user_profile.especialidade,
+                report_html=report_html
+            )
 
             now = datetime.now(ZoneInfo("America/Porto_Velho"))
             formatted_time = now.strftime("%d/%m/%Y às %H:%M:%S")
@@ -86,13 +84,29 @@ def home_view(request):
     return render(request, 'home.html', {'form': form})
 
 
+@login_required
+def historico_view(request):
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+
+    relatorios_list = Relatorio.objects.filter(usuario=request.user)
+
+    if data_inicio:
+        relatorios_list = relatorios_list.filter(data_criacao__date__gte=data_inicio)
+    if data_fim:
+        relatorios_list = relatorios_list.filter(data_criacao__date__lte=data_fim)
+
+    context = {
+        'relatorios': relatorios_list
+    }
+    return render(request, 'historico.html', context)
+
+
 @require_POST
 def gerar_pdf_view(request):
-    # Recebe o HTML do formulário
     html = request.POST.get('report_html', '')
     time_str = request.POST.get('generation_time', '')
 
-    # Renderiza o template específico do PDF
     html_string = render_to_string('relatorio_pdf.html', {
         'report_html': html,
         'generation_time': time_str

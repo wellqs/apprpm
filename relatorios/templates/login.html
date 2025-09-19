@@ -1,10 +1,97 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Login</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Entrar</button>
-    </form>
+<style>
+    .login-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+    }
+    .login-card {
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 400px;
+    }
+    .login-card h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+    }
+    .input-group { margin-bottom: 20px; }
+    .input-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #555; }
+    .input-group input {
+        width: 100%; padding: 12px; border: 1px solid #ddd;
+        border-radius: 5px; box-sizing: border-box;
+    }
+    .login-button {
+        width: 100%; padding: 12px; background-color: #007bff;
+        color: white; border: none; border-radius: 5px;
+        font-size: 16px; cursor: pointer; transition: background-color 0.2s;
+    }
+    .login-button:hover { background-color: #0056b3; }
+    .error-message {
+        background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+        padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;
+    }
+
+    /* --- ESTILOS CORRIGIDOS PARA O LOGO --- */
+    .logo-container {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #ffffff; /* MUDANÇA: Cor principal do logo para branco */
+    }
+    .logo-container h1 {
+        font-size: 5rem;
+        font-weight: 900;
+        margin: 0;
+        letter-spacing: 5px;
+        /* Adiciona uma leve sombra para destacar o texto no fundo */
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    }
+    .logo-container p {
+        margin: 0;
+        font-size: 1rem;
+        color: #e0e0e0; /* MUDANÇA: Cor do subtítulo para um cinza claro */
+        text-transform: uppercase;
+        letter-spacing: 4px;
+    }
+</style>
+
+<div class="login-container">
+
+    <div class="logo-container">
+        <h1>RPM</h1>
+        <p>Relatório de Produtividade Mensal</p>
+    </div>
+
+    <div class="login-card">
+        <h2>Login</h2>
+
+        {% if form.non_field_errors %}
+            <div class="error-message">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="id_username">Usuário</label>
+                <input type="text" name="username" id="id_username" required>
+            </div>
+            <div class="input-group">
+                <label for="id_password">Senha</label>
+                <input type="password" name="password" id="id_password" required>
+            </div>
+            <button type="submit" class="login-button">Entrar</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

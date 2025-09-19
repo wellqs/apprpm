@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Meu Histórico de Relatórios</h2>
+        <a href="{% url 'logout' %}">Sair</a>
+    </div>
+    <a href="{% url 'home' %}">&larr; Voltar para o Gerador</a>
+
+    <hr>
+
+    <h4>Filtrar por Período</h4>
+    <form method="GET" action="{% url 'historico' %}">
+        <label for="data_inicio">De:</label>
+        <input type="date" name="data_inicio" id="data_inicio">
+        <label for="data_fim">Até:</label>
+        <input type="date" name="data_fim" id="data_fim">
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <hr>
+
+    {% for relatorio in relatorios %}
+        <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
+            <p>
+                <strong>Data:</strong> {{ relatorio.data_criacao|date:"d/m/Y H:i" }}<br>
+                <strong>Especialidade:</strong> {{ relatorio.especialidade }}
+            </p>
+            <hr>
+            <div>
+                {{ relatorio.report_html|safe }}
+            </div>
+        </div>
+    {% empty %}
+        <p>Nenhum relatório encontrado para este período.</p>
+    {% endfor %}
+</div>
+{% endblock %}
